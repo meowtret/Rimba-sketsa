@@ -19,7 +19,6 @@
 from .logger import log
 
 from pathlib import Path
-import os
 import re
 import unicodedata
 import weakref
@@ -30,11 +29,7 @@ from qgis.PyQt.QtCore import (
     QCoreApplication,
     QDate,
     QDateTime,
-    QLocale,
-    QSettings,
     QTime,
-    QTranslator,
-    qVersion,
 )
 from qgis.PyQt.QtGui import QColor, QGuiApplication, QIcon, QCloseEvent
 from qgis.PyQt.QtWidgets import QApplication, QComboBox, QDateEdit, QDateTimeEdit, QDialog, QFileDialog, QInputDialog, QLineEdit, QMenu, QMessageBox, QProgressDialog, QStatusBar, QTabWidget, QTableWidget, QTableWidgetItem, QTimeEdit, QToolBar, QVBoxLayout, QWidget, QWidgetAction
@@ -88,9 +83,8 @@ class AttributesTable(QDialog):
 
     # Un attribut passé à une classe se récupère ici dans def __init__
     # def __init__(self, iface, name):
-    def __init__(self, name, iface, *, is_evt_mode: bool = False):
+    def __init__(self, name, iface):
         super().__init__(iface.mainWindow() if iface else None)
-        self._is_evt_mode = bool(is_evt_mode)
         self.iface = iface
         self._force_close = False
         self.setWindowModality(NON_MODAL)
@@ -107,18 +101,15 @@ class AttributesTable(QDialog):
                 return
             self.destroyed.connect(_on_destroyed)
         except Exception:
-            log.debug("Ignored exception in AttributesTable.py:131", exc_info=True)
+            log.debug("Ignored exception in AttributesTable.py", exc_info=True)
 
         flags = WINDOW | WINDOW_TITLE_HINT | WINDOW_SYSTEM_MENU_HINT | WINDOW_MINIMIZE_BUTTON_HINT | WINDOW_MAXIMIZE_BUTTON_HINT
 
-        # ✅ croix : désactivée si EVT, activée si non-EVT
+        # ✅ croix de fermeture toujours active
         try:
-            if self._is_evt_mode:
-                flags &= ~WINDOW_CLOSE_BUTTON_HINT
-            else:
-                flags |= WINDOW_CLOSE_BUTTON_HINT
+            flags |= WINDOW_CLOSE_BUTTON_HINT
         except Exception:
-            log.debug("Ignored exception in AttributesTable.py:142", exc_info=True)
+            log.debug("Ignored exception in AttributesTable.py", exc_info=True)
 
         self.setWindowFlags(flags)
 
@@ -128,30 +119,7 @@ class AttributesTable(QDialog):
         # self.raise_()
         # self.activateWindow()
 
-        self._is_evt_mode = bool(is_evt_mode)
-
-        from .logger import redirect_print_to_log
-        redirect_print_to_log()
-        # *** ATTENTION *** : dans le fichier de traduction la ligne <name>QdrawEVT</name> porte sur la classe principale (ici QdrawEVT dans le fichier qdrawEVT.py)
-        overrideLocale = QSettings().value("locale/overrideFlag", False, type=bool)
-        if not overrideLocale:
-            locale = QLocale.system().name()
-        else:
-            locale = QSettings().value("locale/userLocale", "")
-            if locale.__class__.__name__ == 'QVariant':
-                locale = 'en'
-        locale = locale[0:2]
-        locale_path = os.path.join(
-            os.path.dirname(__file__),
-            'i18n',
-            'translate_{}.qm'.format(locale))
-        self.translator = None
-        if os.path.exists(locale_path):
-            self.translator = QTranslator()
-            self.translator.load(locale_path)
-
-            if qVersion() > '4.3.3':
-                QCoreApplication.installTranslator(self.translator)
+        # Terjemahan dimuat sekali oleh RimbaSketsa (i18n/rimba_sketsa_<lang>.qm)
 
         self.setWindowTitle(self.tr('Selection made in %1 perimeter').replace('%1', name))
         self.resize(480, 320)
@@ -228,24 +196,24 @@ class AttributesTable(QDialog):
         try:
             self._qdraw_closing = True
         except Exception:
-            log.debug("Ignored exception in AttributesTable.py:252", exc_info=True)
+            log.debug("Ignored exception in AttributesTable.py", exc_info=True)
 
         try:
             self.setAttribute(WA_DELETE_ON_CLOSE, True)
         except Exception:
-            log.debug("Ignored exception in AttributesTable.py:257", exc_info=True)
+            log.debug("Ignored exception in AttributesTable.py", exc_info=True)
 
         # visuel immédiat
         try:
             self.hide()
         except Exception:
-            log.debug("Ignored exception in AttributesTable.py:263", exc_info=True)
+            log.debug("Ignored exception in AttributesTable.py", exc_info=True)
 
         # ✅ fermeture immédiate (pas de singleShot)
         try:
             self.close()
         except Exception:
-            log.debug("Ignored exception in AttributesTable.py:269", exc_info=True)
+            log.debug("Ignored exception in AttributesTable.py", exc_info=True)
 
         # ✅ vider tout ce qui est en file (closeEvent, deleteLater, DeferredDelete…)
         try:
@@ -255,7 +223,7 @@ class AttributesTable(QDialog):
                 QtCore.QCoreApplication.sendPostedEvents(None, scoped_enum(QtCore.QEvent, "Type", "DeferredDelete"))
                 app.processEvents()
         except Exception:
-            log.debug("Ignored exception in AttributesTable.py:279", exc_info=True)
+            log.debug("Ignored exception in AttributesTable.py", exc_info=True)
 
     @classmethod
     def close_all(cls, reason: str = "") -> None:
@@ -263,7 +231,7 @@ class AttributesTable(QDialog):
             try:
                 w.force_close_now()
             except Exception:
-                log.debug("Ignored exception in AttributesTable.py:287", exc_info=True)
+                log.debug("Ignored exception in AttributesTable.py", exc_info=True)
         try:
             app = QApplication.instance()
             if app:
@@ -271,7 +239,7 @@ class AttributesTable(QDialog):
                 QtCore.QCoreApplication.sendPostedEvents(None, scoped_enum(QtCore.QEvent, "Type", "DeferredDelete"))
                 app.processEvents()
         except Exception:
-            log.debug("Ignored exception in AttributesTable.py:295", exc_info=True)
+            log.debug("Ignored exception in AttributesTable.py", exc_info=True)
 
     def closeEvent(self, event: QCloseEvent) -> None:
         if getattr(self, "_qdraw_closing", False):
@@ -282,11 +250,6 @@ class AttributesTable(QDialog):
         if getattr(self, "_force_close", False):
             event.accept()
             super().closeEvent(event)
-            return
-
-        if getattr(self, "_is_evt_mode", False):
-            event.ignore()
-            self._qdraw_closing = False
             return
 
         event.accept()
@@ -302,10 +265,10 @@ class AttributesTable(QDialog):
             if iface is not None:
                 return iface.layerTreeView()
             else:
-                QgsMessageLog.logMessage("Impossible d'accéder à iface.layerTreeView()", "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning"))
+                QgsMessageLog.logMessage("Impossible d'accéder à iface.layerTreeView()", "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning"))
                 return None
         except Exception as e:
-            QgsMessageLog.logMessage(f"[AttributesTable.layerTreeView] Erreur : {e}", "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning"))
+            QgsMessageLog.logMessage(f"[AttributesTable.layerTreeView] Erreur : {e}", "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning"))
             return None
 
     def renameWindow(self):
@@ -335,7 +298,7 @@ class AttributesTable(QDialog):
             if root is None:
                 QgsMessageLog.logMessage(
                     "[AttributesTable.exportAllLayer] Impossible d’accéder au layerTreeRoot.",
-                    "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Critical")
+                    "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Critical")
                 )
                 return
 
@@ -356,7 +319,7 @@ class AttributesTable(QDialog):
                 except Exception as e:
                     QgsMessageLog.logMessage(
                         f"[AttributesTable.exportAllLayer] Erreur traitement du groupe {group.name()}: {e}",
-                        "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning")
+                        "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning")
                     )
 
             # 🔹 Vérification du nombre d’onglets
@@ -364,7 +327,7 @@ class AttributesTable(QDialog):
             if tab_count == 0:
                 QgsMessageLog.logMessage(
                     "[AttributesTable.exportAllLayer] Aucun onglet présent, rien à exporter.",
-                    "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Info")
+                    "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Info")
                 )
                 return
 
@@ -376,12 +339,12 @@ class AttributesTable(QDialog):
                 group_extr = root.findGroup(name_extracts)
                 QgsMessageLog.logMessage(
                     f"[AttributesTable.exportAllLayer] Groupe '{name_extracts}' créé.",
-                    "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Info")
+                    "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Info")
                 )
             else:
                 QgsMessageLog.logMessage(
                     f"[AttributesTable.exportAllLayer] Groupe '{name_extracts}' existant réutilisé.",
-                    "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Info")
+                    "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Info")
                 )
 
             # 🔹 Export de chaque onglet
@@ -417,7 +380,7 @@ class AttributesTable(QDialog):
                     if not features:
                         QgsMessageLog.logMessage(
                             f"[AttributesTable.exportAllLayer] Aucun feature valide trouvé dans l’onglet {table.title}.",
-                            "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning")
+                            "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning")
                         )
                         continue
 
@@ -432,7 +395,7 @@ class AttributesTable(QDialog):
                     if not layer.isValid():
                         QgsMessageLog.logMessage(
                             f"[AttributesTable.exportAllLayer] Couche '{name}' invalide, sautée.",
-                            "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning")
+                            "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning")
                         )
                         continue
 
@@ -447,7 +410,7 @@ class AttributesTable(QDialog):
                     group_extr.insertLayer(0, layer)
                     QgsMessageLog.logMessage(
                         f"[AttributesTable.exportAllLayer] Couche '{name}' exportée avec succès.",
-                        "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Info")
+                        "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Info")
                     )
 
                     # Copie du style
@@ -461,12 +424,12 @@ class AttributesTable(QDialog):
                             self.iface.actionPasteLayerStyle().trigger()
                             QgsMessageLog.logMessage(
                                 f"[AttributesTable.exportAllLayer] Style copié depuis '{src_layer.name()}'.",
-                                "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Info")
+                                "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Info")
                             )
                     except Exception as e_style:
                         QgsMessageLog.logMessage(
                             f"[AttributesTable.exportAllLayer] Erreur copie style '{name}' : {e_style}",
-                            "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning")
+                            "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning")
                         )
 
                     table.clearSelection()
@@ -474,7 +437,7 @@ class AttributesTable(QDialog):
                 except Exception as e_tab:
                     QgsMessageLog.logMessage(
                         f"[AttributesTable.exportAllLayer] Erreur lors de l’export d’un onglet : {e_tab}",
-                        "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning")
+                        "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning")
                     )
 
             # 🔹 Repli et expansion cohérente des groupes
@@ -490,7 +453,7 @@ class AttributesTable(QDialog):
                         group.setExpanded(True)
                         QgsMessageLog.logMessage(
                             f"[AttributesTable.exportAllLayer] Groupe '{group.name()}' réactivé.",
-                            "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Info")
+                            "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Info")
                         )
 
                 group_extr.setExpanded(True)
@@ -498,19 +461,19 @@ class AttributesTable(QDialog):
                 self.iface.mapCanvas().refresh()
                 QgsMessageLog.logMessage(
                     f"[AttributesTable.exportAllLayer] Export global terminé pour '{name_extracts}'.",
-                    "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Info")
+                    "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Info")
                 )
 
             except Exception as e_end:
                 QgsMessageLog.logMessage(
                     f"[AttributesTable.exportAllLayer] Erreur finale de réorganisation : {e_end}",
-                    "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning")
+                    "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning")
                 )
 
         except Exception as e:
             QgsMessageLog.logMessage(
                 f"[AttributesTable.exportAllLayer] Erreur inattendue : {e}",
-                "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Critical")
+                "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Critical")
             )
 
     def exportLayer(self):
@@ -520,14 +483,14 @@ class AttributesTable(QDialog):
             if not hasattr(self, "tabWidget") or self.tabWidget is None:
                 QgsMessageLog.logMessage(
                     "[AttributesTable.exportLayer] tabWidget introuvable.",
-                    "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning")
+                    "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning")
                 )
                 return
 
             if self.tabWidget.count() == 0:
                 QgsMessageLog.logMessage(
                     "[AttributesTable.exportLayer] Aucun onglet dans la table, export annulé.",
-                    "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Info")
+                    "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Info")
                 )
                 return
 
@@ -536,7 +499,7 @@ class AttributesTable(QDialog):
             if not table_widget:
                 QgsMessageLog.logMessage(
                     "[AttributesTable.exportLayer] Onglet actuel introuvable.",
-                    "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning")
+                    "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning")
                 )
                 return
 
@@ -544,7 +507,7 @@ class AttributesTable(QDialog):
             if not tables:
                 QgsMessageLog.logMessage(
                     "[AttributesTable.exportLayer] Aucun QTableWidget trouvé dans l’onglet sélectionné.",
-                    "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning")
+                    "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning")
                 )
                 return
 
@@ -554,7 +517,7 @@ class AttributesTable(QDialog):
             if not items:
                 QgsMessageLog.logMessage(
                     "[AttributesTable.exportLayer] Aucun élément sélectionné, export annulé.",
-                    "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Info")
+                    "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Info")
                 )
                 table.clearSelection()
                 return
@@ -567,7 +530,7 @@ class AttributesTable(QDialog):
             if root is None:
                 QgsMessageLog.logMessage(
                     "[AttributesTable.exportLayer] Impossible d’accéder au root du projet.",
-                    "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Critical")
+                    "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Critical")
                 )
                 return
 
@@ -580,18 +543,18 @@ class AttributesTable(QDialog):
                     group_extr = root.findGroup(name_extracts)
                     QgsMessageLog.logMessage(
                         f"[AttributesTable.exportLayer] Nouveau groupe '{name_extracts}' créé.",
-                        "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Info")
+                        "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Info")
                     )
                 except Exception as e_group:
                     QgsMessageLog.logMessage(
                         f"[AttributesTable.exportLayer] Erreur lors de la création du groupe : {e_group}",
-                        "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Critical")
+                        "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Critical")
                     )
                     return
             else:
                 QgsMessageLog.logMessage(
                     f"[AttributesTable.exportLayer] Groupe '{name_extracts}' existant réutilisé.",
-                    "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Info")
+                    "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Info")
                 )
 
             # Détermination du type géométrique
@@ -606,7 +569,7 @@ class AttributesTable(QDialog):
             except Exception as e_geom:
                 QgsMessageLog.logMessage(
                     f"[AttributesTable.exportLayer] Erreur détermination du type géométrique : {e_geom}",
-                    "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning")
+                    "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning")
                 )
                 gtype = "Polygon"
 
@@ -620,13 +583,13 @@ class AttributesTable(QDialog):
             except Exception as e_feat:
                 QgsMessageLog.logMessage(
                     f"[AttributesTable.exportLayer] Erreur lors de la collecte des entités : {e_feat}",
-                    "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning")
+                    "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning")
                 )
 
             if not features:
                 QgsMessageLog.logMessage(
                     "[AttributesTable.exportLayer] Aucune entité valide trouvée pour l’export.",
-                    "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning")
+                    "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning")
                 )
                 return
 
@@ -637,13 +600,13 @@ class AttributesTable(QDialog):
                 if not layer.isValid():
                     QgsMessageLog.logMessage(
                         f"[AttributesTable.exportLayer] Échec de création de la couche mémoire '{name}'.",
-                        "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Critical")
+                        "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Critical")
                     )
                     return
             except Exception as e_layer:
                 QgsMessageLog.logMessage(
                     f"[AttributesTable.exportLayer] Erreur création couche mémoire : {e_layer}",
-                    "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Critical")
+                    "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Critical")
                 )
                 return
 
@@ -657,7 +620,7 @@ class AttributesTable(QDialog):
             except Exception as e_add:
                 QgsMessageLog.logMessage(
                     f"[AttributesTable.exportLayer] Erreur ajout des entités : {e_add}",
-                    "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning")
+                    "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning")
                 )
 
             # Insertion de la couche dans le groupe
@@ -667,12 +630,12 @@ class AttributesTable(QDialog):
                 group_extr.setExpanded(True)
                 QgsMessageLog.logMessage(
                     f"[AttributesTable.exportLayer] Couche '{name}' ajoutée dans le groupe '{name_extracts}'.",
-                    "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Info")
+                    "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Info")
                 )
             except Exception as e_insert:
                 QgsMessageLog.logMessage(
                     f"[AttributesTable.exportLayer] Erreur insertion couche dans le groupe : {e_insert}",
-                    "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Critical")
+                    "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Critical")
                 )
                 return
 
@@ -687,12 +650,12 @@ class AttributesTable(QDialog):
                     self.iface.actionPasteLayerStyle().trigger()
                     QgsMessageLog.logMessage(
                         f"[AttributesTable.exportLayer] Style copié depuis '{src_layer.name()}'.",
-                        "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Info")
+                        "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Info")
                     )
             except Exception as e_style:
                 QgsMessageLog.logMessage(
                     f"[AttributesTable.exportLayer] Erreur lors de la copie du style : {e_style}",
-                    "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning")
+                    "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning")
                 )
 
             # Sélection visuelle du groupe et rafraîchissement
@@ -707,17 +670,17 @@ class AttributesTable(QDialog):
                 table.clearSelection()
                 QgsMessageLog.logMessage(
                     f"[AttributesTable.exportLayer] Export terminé pour '{name}'.",
-                    "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Info")
+                    "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Info")
                 )
             except Exception as e_refresh:
                 QgsMessageLog.logMessage(
                     f"[AttributesTable.exportLayer] Erreur pendant le rafraîchissement QGIS : {e_refresh}",
-                    "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning")
+                    "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning")
                 )
         except Exception as e:
             QgsMessageLog.logMessage(
                 f"[AttributesTable.exportLayer] Erreur inattendue : {e}",
-                "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Critical")
+                "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Critical")
             )
 
     def highlight_features(self):
@@ -730,13 +693,13 @@ class AttributesTable(QDialog):
                     if hasattr(h, "hide"):
                         h.hide()
                 except Exception:
-                    log.debug("Ignored exception in AttributesTable.py:754", exc_info=True)
+                    log.debug("Ignored exception in AttributesTable.py", exc_info=True)
                 try:
                     # Selon l’état du canvas, l’item peut déjà avoir été retiré
                     if hasattr(self, "canvas") and self.canvas and self.canvas.scene():
                         self.canvas.scene().removeItem(h)
                 except Exception:
-                    log.debug("Ignored exception in AttributesTable.py:760", exc_info=True)
+                    log.debug("Ignored exception in AttributesTable.py", exc_info=True)
         except Exception as e:
             log.warning(f"[highlight_features] Erreur pendant le nettoyage des highlights : {e}")
 
@@ -782,7 +745,7 @@ class AttributesTable(QDialog):
                 if hasattr(tab, "sb"):
                     tab.sb.showMessage(self.tr("No items were selected"))
             except Exception:
-                log.debug("Ignored exception in AttributesTable.py:806", exc_info=True)
+                log.debug("Ignored exception in AttributesTable.py", exc_info=True)
             return
 
         # Accumulateurs
@@ -816,7 +779,7 @@ class AttributesTable(QDialog):
                 try:
                     geom = feat.geometry()
                 except Exception:
-                    log.debug("Ignored exception in AttributesTable.py:840", exc_info=True)
+                    log.debug("Ignored exception in AttributesTable.py", exc_info=True)
                     continue
                 if geom is None or geom.isEmpty():
                     continue
@@ -870,7 +833,7 @@ class AttributesTable(QDialog):
                 if gtype == scoped_enum(QgsWkbTypes, "GeometryType", "PolygonGeometry"):
                     tab.sb.showMessage(self.tr("Selected items: {nb} Area: {area} m²").format(nb=nb, area=area))
                 elif gtype == scoped_enum(QgsWkbTypes, "GeometryType", "LineGeometry"):
-                    tab.sb.showMessage(self.tr('Selected itemss: {nb} - Length: {lenght}m').format(nb=nb, length=length))
+                    tab.sb.showMessage(self.tr('Selected items: {nb} - Length: {length} m').format(nb=nb, length=length))
                 else:
                     tab.sb.showMessage(self.tr('Selected items: {nb}').format(nb=nb))
         except Exception as e_sb:
@@ -1022,7 +985,7 @@ class AttributesTable(QDialog):
                         table.setItem(m, n, item)
                         n += 1
                     except KeyError:
-                        log.debug("Ignored exception in AttributesTable.py:1045", exc_info=True)
+                        log.debug("Ignored exception in AttributesTable.py", exc_info=True)
                 m += 1
                 self.loadingWindow.setValue(int((float(m) / nbrow) * 100))
                 QApplication.processEvents()
@@ -1220,7 +1183,6 @@ class AttributesTable(QDialog):
     def saveAttributes(self, active):
         """Sauvegarde les attributs des tables au format .ods avec écriture atomique (tmp -> replace)."""
         from pathlib import Path
-        import os
         import re
         import stat
 
@@ -1299,7 +1261,7 @@ class AttributesTable(QDialog):
                 try:
                     tmp_path.unlink()
                 except Exception:
-                    log.debug("Ignored exception in AttributesTable.py:1322", exc_info=True)
+                    log.debug("Ignored exception in AttributesTable.py", exc_info=True)
 
             # 2) Écriture ODS vers le .tmp
             with ods.writer(str(tmp_path)) as odsfile:
@@ -1333,7 +1295,7 @@ class AttributesTable(QDialog):
                                 elif val.startswith(("0,", "0.")):
                                     val = float(val)
                             except Exception:
-                                log.debug("Ignored exception in AttributesTable.py:1356", exc_info=True)
+                                log.debug("Ignored exception in AttributesTable.py", exc_info=True)
                             row_data.append(val)
                         sheet.writerow(row_data)
 
@@ -1345,7 +1307,7 @@ class AttributesTable(QDialog):
                         file_path.chmod(mode | stat.S_IWRITE)
                 except Exception:
                     # on ignore, on tentera quand même le replace()
-                    log.debug("Ignored exception in AttributesTable.py:1368", exc_info=True)
+                    log.debug("Ignored exception in AttributesTable.py", exc_info=True)
 
             # 4) Remplacement atomique (échoue proprement si le fichier est ouvert ailleurs)
             try:
@@ -1356,7 +1318,7 @@ class AttributesTable(QDialog):
                     if tmp_path.exists():
                         tmp_path.unlink()
                 except Exception:
-                    log.debug("Ignored exception in AttributesTable.py:1379", exc_info=True)
+                    log.debug("Ignored exception in AttributesTable.py", exc_info=True)
                 QMessageBox.critical(
                     self,
                     self.tr("Error"),
@@ -1369,7 +1331,7 @@ class AttributesTable(QDialog):
                     if tmp_path.exists():
                         tmp_path.unlink()
                 except Exception:
-                    log.debug("Ignored exception in AttributesTable.py:1392", exc_info=True)
+                    log.debug("Ignored exception in AttributesTable.py", exc_info=True)
                 QMessageBox.critical(
                     self,
                     self.tr("Error"),
@@ -1383,7 +1345,7 @@ class AttributesTable(QDialog):
                 try:
                     tmp_path.unlink()
                 except Exception:
-                    log.debug("Ignored exception in AttributesTable.py:1406", exc_info=True)
+                    log.debug("Ignored exception in AttributesTable.py", exc_info=True)
 
         # -- Proposer d’ouvrir -----------------------------------------------
         msg = QMessageBox(self.iface.mainWindow())
@@ -1477,7 +1439,7 @@ class AttributesTable(QDialog):
             if group is None:
                 QgsMessageLog.logMessage(
                     f"[AttributesTable.select] Groupe '{group_extr}' introuvable.",
-                    "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Info")
+                    "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Info")
                 )
                 return
 
@@ -1501,7 +1463,7 @@ class AttributesTable(QDialog):
             else:
                 QgsMessageLog.logMessage(
                     "[AttributesTable.select] Impossible de créer un index pour le groupe.",
-                    "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning")
+                    "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning")
                 )
                 return
 
@@ -1519,11 +1481,11 @@ class AttributesTable(QDialog):
 
             QgsMessageLog.logMessage(
                 f"[AttributesTable.select] Groupe '{group.name()}' sélectionné.",
-                "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Info")
+                "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Info")
             )
 
         except Exception as e:
             QgsMessageLog.logMessage(
                 f"[AttributesTable.select] Erreur inattendue : {e}",
-                "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Critical")
+                "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Critical")
             )

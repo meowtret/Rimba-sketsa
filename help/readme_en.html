@@ -1,0 +1,67 @@
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  body { font-family: Arial, sans-serif; font-size: 10.5pt; line-height: 1.45; margin: 10px; }
+  h1 { font-size: 15pt; color: #1f5f3a; margin-bottom: 2px; }
+  h2 { font-size: 12pt; color: #1f5f3a; margin-top: 18px; border-bottom: 1px solid #cfd8d2; }
+  td, th { padding: 4px 8px; vertical-align: top; }
+  th { text-align: left; background: #eef3ef; }
+  .muted { color: #666; font-size: 9pt; }
+  code { background: #f2f2f2; padding: 0 3px; }
+</style>
+</head>
+<body>
+<h1>Rimba Sketsa</h1>
+<p class="muted">Quick drawing and selection tools for QGIS. Version 1.0.0</p>
+
+<h2>Toolbar tools</h2>
+<table cellspacing="0" border="1" style="border-collapse:collapse; border-color:#cfd8d2;">
+<tr><th>Tool</th><th>How to use</th></tr>
+<tr><td><b>Text</b></td><td>Left click on the map and type the text. It is stored as a label on a layer in the <i>Drawings</i> group.</td></tr>
+<tr><td><b>Point</b></td><td>Left click on the map. The small arrow next to the icon offers:
+  <br>&bull; <b>XY</b>: type X/Y coordinates and choose their projection (WGS 84 by default).
+  <br>&bull; <b>DMS</b>: type latitude/longitude in degrees-minutes-seconds.</td></tr>
+<tr><td><b>Line</b></td><td>Left click to add vertices, right click to finish.</td></tr>
+<tr><td><b>Rectangle</b></td><td>Hold the left button and drag. A single click asks for a size (metres).</td></tr>
+<tr><td><b>Circle</b></td><td>Hold the left button and drag from the centre. A single click asks for a radius (metres).</td></tr>
+<tr><td><b>Polygon</b></td><td>Left click to add vertices, right click to finish.</td></tr>
+<tr><td><b>Buffer</b></td><td>Select a vector layer in the Layers panel, then click a feature on the map. Choose <i>Create buffer</i> (distance in metres) or <i>No buffer</i> (use the feature itself).
+  <br>The second option under the small arrow: draw a polygon; every feature of the selected layer it intersects becomes the buffer source.</td></tr>
+<tr><td><b>Settings</b></td><td>Drawing colour and opacity, text font and colour.</td></tr>
+</table>
+
+<h2>Where drawings go</h2>
+<p>Each drawing gets a name and is stored as a <b>memory layer</b> in the <b>Drawings</b> group (top of the Layers panel).
+Tick <i>Add to an existing layer</i> to put the drawing into another layer with the same geometry type.</p>
+<p>Memory layers are lost when QGIS closes; right click the layer &rarr; <i>Make Permanent</i> / <i>Export</i> to keep it.</p>
+
+<h2>Selecting features inside a drawing</h2>
+<p>After a line, rectangle, circle, polygon or buffer is drawn, the plugin offers a selection. If you answer <b>Yes</b>:</p>
+<ol>
+<li>Choose the layer group to search. Checked groups are used directly; otherwise a list of groups is shown.</li>
+<li>Features of visible vector layers that intersect the drawing are selected.</li>
+<li>Results open in a table window, one tab per layer.</li>
+</ol>
+<p>These groups are <b>never</b> searched (case, spaces and accents are ignored):
+<code>Peta Dasar</code>, <code>Basemap</code>, <code>Administrasi</code>, <code>Fonds de plan</code>, <code>Administratif</code>, and the <i>Drawings</i> group itself.</p>
+
+<h2>Results window</h2>
+<ul>
+<li><b>Save this tab / Save all results</b>: write an ODS spreadsheet (opens in LibreOffice or Excel).</li>
+<li><b>Export as memory layer</b>: turn the selection into a new layer.</li>
+<li><b>Zoom to selected attributes</b> and <b>Highlight geometry / centroid</b>: click rows to see the features on the map.</li>
+<li>The status bar shows the number of selected features and their area (polygons) or length (lines).</li>
+</ul>
+
+<h2>Notes</h2>
+<ul>
+<li>Buffer, radius and rectangle sizes are in <b>metres</b>; use a projected, metric project CRS (e.g. UTM).</li>
+<li>The interface language follows QGIS (Settings &rarr; Options &rarr; General &rarr; User interface translation).</li>
+</ul>
+
+<h2>Credits &amp; licence</h2>
+<p>Rimba Sketsa is developed by Alfian (meowtret) from <b>qdrawEVT 2.74</b> by François Thévand, itself based on <b>QDraw</b> by Jérémy Kalsron.
+Released under the GNU GPL v3 or later.</p>
+</body>
+</html>

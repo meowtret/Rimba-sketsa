@@ -1,0 +1,67 @@
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  body { font-family: Arial, sans-serif; font-size: 10.5pt; line-height: 1.45; margin: 10px; }
+  h1 { font-size: 15pt; color: #1f5f3a; margin-bottom: 2px; }
+  h2 { font-size: 12pt; color: #1f5f3a; margin-top: 18px; border-bottom: 1px solid #cfd8d2; }
+  td, th { padding: 4px 8px; vertical-align: top; }
+  th { text-align: left; background: #eef3ef; }
+  .muted { color: #666; font-size: 9pt; }
+  code { background: #f2f2f2; padding: 0 3px; }
+</style>
+</head>
+<body>
+<h1>Rimba Sketsa</h1>
+<p class="muted">Alat gambar dan seleksi cepat untuk QGIS. Versi 1.0.0</p>
+
+<h2>Alat di toolbar</h2>
+<table cellspacing="0" border="1" style="border-collapse:collapse; border-color:#cfd8d2;">
+<tr><th>Alat</th><th>Cara pakai</th></tr>
+<tr><td><b>Teks</b></td><td>Klik kiri di peta, lalu ketik teksnya. Teks disimpan sebagai label pada layer di grup <i>Sketsa</i>.</td></tr>
+<tr><td><b>Titik</b></td><td>Klik kiri di peta. Panah kecil di sebelah ikon membuka dua pilihan:
+  <br>&bull; <b>XY</b>: isi koordinat X/Y lalu pilih proyeksinya (default WGS 84).
+  <br>&bull; <b>DMS</b>: isi lintang/bujur dalam derajat-menit-detik.</td></tr>
+<tr><td><b>Garis</b></td><td>Klik kiri untuk menambah titik, klik kanan untuk selesai.</td></tr>
+<tr><td><b>Persegi</b></td><td>Tahan klik kiri lalu seret. Klik sekali untuk mengisi ukuran (meter).</td></tr>
+<tr><td><b>Lingkaran</b></td><td>Tahan klik kiri lalu seret dari titik pusat. Klik sekali untuk mengisi jari-jari (meter).</td></tr>
+<tr><td><b>Poligon</b></td><td>Klik kiri untuk menambah titik, klik kanan untuk selesai.</td></tr>
+<tr><td><b>Buffer</b></td><td>Pilih layer vektor di panel Layers, lalu klik objek di peta. Pilih <i>Buat buffer</i> (isi jarak dalam meter) atau <i>Tanpa buffer</i> (memakai objek itu sendiri).
+  <br>Pilihan kedua di panah kecil: gambar poligon, lalu semua objek layer terpilih yang terpotong poligon dipakai sebagai dasar buffer.</td></tr>
+<tr><td><b>Pengaturan</b></td><td>Warna dan opasitas gambar, huruf dan warna teks.</td></tr>
+</table>
+
+<h2>Menyimpan gambar</h2>
+<p>Setiap gambar diberi nama, lalu disimpan sebagai <b>layer memori</b> di grup <b>Sketsa</b> (paling atas di panel Layers).
+Centang <i>Tambahkan ke layer yang sudah ada</i> untuk memasukkan gambar ke layer lain yang jenis geometrinya sama.</p>
+<p>Layer memori hilang saat QGIS ditutup. Kalau perlu disimpan, klik kanan layer, lalu <i>Make Permanent</i> / <i>Export</i>.</p>
+
+<h2>Seleksi objek di dalam gambar</h2>
+<p>Setelah garis, persegi, lingkaran, poligon, atau buffer selesai dibuat, plugin menawarkan seleksi. Kalau dijawab <b>Ya</b>:</p>
+<ol>
+<li>Pilih grup layer yang ingin diseleksi. Grup yang dicentang langsung dipakai. Kalau belum ada yang dicentang, plugin menampilkan daftar grup.</li>
+<li>Objek pada layer vektor yang tampil dan berpotongan dengan gambar akan terseleksi.</li>
+<li>Hasilnya muncul di jendela tabel, satu tab per layer.</li>
+</ol>
+<p>Grup berikut otomatis <b>tidak</b> ikut diseleksi (penulisan huruf besar/kecil, spasi, dan aksen diabaikan):
+<code>Peta Dasar</code>, <code>Basemap</code>, <code>Administrasi</code>, <code>Fonds de plan</code>, <code>Administratif</code>, serta grup <i>Sketsa</i> itu sendiri.</p>
+
+<h2>Jendela hasil seleksi</h2>
+<ul>
+<li><b>Simpan hasil tab ini / Simpan semua hasil</b>: simpan ke file spreadsheet ODS (bisa dibuka di LibreOffice atau Excel).</li>
+<li><b>Ekspor ke layer memori</b>: hasil seleksi menjadi layer baru.</li>
+<li><b>Zoom ke baris terpilih</b> dan <b>Sorot geometri / titik tengah</b>: klik baris di tabel untuk melihat objeknya di peta.</li>
+<li>Status bar menampilkan jumlah objek terpilih, luas (poligon), atau panjang (garis).</li>
+</ul>
+
+<h2>Catatan</h2>
+<ul>
+<li>Ukuran buffer, jari-jari, dan persegi dalam <b>meter</b>, jadi proyek sebaiknya memakai CRS bersatuan meter (mis. UTM / EPSG:32750, EPSG:32751).</li>
+<li>Bahasa antarmuka mengikuti bahasa QGIS (Settings &rarr; Options &rarr; General &rarr; User interface translation).</li>
+</ul>
+
+<h2>Kredit &amp; lisensi</h2>
+<p>Rimba Sketsa dikembangkan oleh Alfian (meowtret) dari plugin <b>qdrawEVT 2.74</b> karya François Thévand, yang berbasis <b>QDraw</b> karya Jérémy Kalsron.
+Dirilis di bawah lisensi GNU GPL v3 atau yang lebih baru.</p>
+</body>
+</html>

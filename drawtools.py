@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# qdrawEVT: plugin that makes drawing easier
+# Rimba Sketsa (turunan qdrawEVT / QDraw): alat gambar pada kanvas peta
 # Author: Jérémy Kalsron, François Thévand
 # Robustification: Maintien de la logique d’origine, compatibilité QGIS 3.34 / PyQt6
 
@@ -60,7 +60,7 @@ def msg_inf(msg='', parent=None):
     try:
         QMessageBox.information(parent, 'Information', msg)
     except Exception as e:
-        QgsMessageLog.logMessage(f"[msg_inf] Erreur: {e}", "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning"))
+        QgsMessageLog.logMessage(f"[msg_inf] Erreur: {e}", "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning"))
 
 
 # --------------------------------------------------------------------
@@ -94,7 +94,7 @@ class DrawRect(QgsMapToolEmitPoint):
             self.endPoint = self.startPoint
             self.isEmittingPoint = True
         except Exception as err:
-            QgsMessageLog.logMessage(f"[DrawRect] PressEvent: {err}", "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning"))
+            QgsMessageLog.logMessage(f"[DrawRect] PressEvent: {err}", "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning"))
 
     def canvasMoveEvent(self, e):
         if not self.isEmittingPoint:
@@ -104,7 +104,7 @@ class DrawRect(QgsMapToolEmitPoint):
             self.endPoint = self.toMapCoordinates(e.pos())
             self.showRect(self.startPoint, self.endPoint)
         except Exception as err:
-            QgsMessageLog.logMessage(f"[DrawRect] MoveEvent: {err}", "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning"))
+            QgsMessageLog.logMessage(f"[DrawRect] MoveEvent: {err}", "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning"))
 
     def canvasReleaseEvent(self, e):
         if not e or e.button() != Qt.MouseButton.LeftButton:
@@ -123,7 +123,7 @@ class DrawRect(QgsMapToolEmitPoint):
                                   QgsPointXY(self.startPoint.x() + width, self.startPoint.y() - height))
                     self.selectionDone.emit()
         except Exception as err:
-            QgsMessageLog.logMessage(f"[DrawRect] ReleaseEvent: {err}", "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning"))
+            QgsMessageLog.logMessage(f"[DrawRect] ReleaseEvent: {err}", "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning"))
 
     def showRect(self, startPoint, endPoint):
         if not startPoint or not endPoint:
@@ -143,7 +143,7 @@ class DrawRect(QgsMapToolEmitPoint):
             self.rb.addPoint(points[-1], True)
             self.rb.show()
         except Exception as err:
-            QgsMessageLog.logMessage(f"[DrawRect] showRect: {err}", "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning"))
+            QgsMessageLog.logMessage(f"[DrawRect] showRect: {err}", "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning"))
 
     def deactivate(self):
         if self.rb:
@@ -186,7 +186,7 @@ class RectangleDialog(QDialog):
             h = float(dialog.height.text()) if dialog.height.text().strip() else 0
             return w, h, result == DIALOG_ACCEPTED
         except Exception as e:
-            QgsMessageLog.logMessage(f"[RectangleDialog] Erreur: {e}", "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning"))
+            QgsMessageLog.logMessage(f"[RectangleDialog] Erreur: {e}", "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning"))
             return 0, 0, False
 
 
@@ -212,7 +212,7 @@ class DrawPolygon(QgsMapTool):
             if e.matches(scoped_enum(QKeySequence, "StandardKey", "Undo")) and self.rb and self.rb.numberOfVertices() > 1:
                 self.rb.removeLastPoint()
         except Exception as err:
-            QgsMessageLog.logMessage(f"[DrawPolygon] keyPressEvent: {err}", "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning"))
+            QgsMessageLog.logMessage(f"[DrawPolygon] keyPressEvent: {err}", "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning"))
 
     def canvasPressEvent(self, e):
         try:
@@ -230,7 +230,7 @@ class DrawPolygon(QgsMapTool):
                 else:
                     self.reset()
         except Exception as err:
-            QgsMessageLog.logMessage(f"[DrawPolygon] PressEvent: {err}", "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning"))
+            QgsMessageLog.logMessage(f"[DrawPolygon] PressEvent: {err}", "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning"))
 
     def canvasMoveEvent(self, e):
         try:
@@ -241,7 +241,7 @@ class DrawPolygon(QgsMapTool):
                 self.rb.addPoint(self.toMapCoordinates(e.pos()))
             self.move.emit()
         except Exception as err:
-            QgsMessageLog.logMessage(f"[DrawPolygon] MoveEvent: {err}", "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning"))
+            QgsMessageLog.logMessage(f"[DrawPolygon] MoveEvent: {err}", "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning"))
 
     def reset(self):
         self.status = 0
@@ -266,7 +266,7 @@ def rbcircle(rb, center, edgePoint, N):
             theta = itheta * (2.0 * pi / N)
             rb.addPoint(QgsPointXY(center.x() + r * cos(theta), center.y() + r * sin(theta)))
     except Exception as err:
-        QgsMessageLog.logMessage(f"[rbcircle] Erreur: {err}", "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning"))
+        QgsMessageLog.logMessage(f"[rbcircle] Erreur: {err}", "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning"))
 
 
 class DrawCircle(QgsMapTool):
@@ -295,7 +295,7 @@ class DrawCircle(QgsMapTool):
             self.center = self.toMapCoordinates(e.pos())
             rbcircle(self.rb, self.center, self.center, self.segments)
         except Exception as err:
-            QgsMessageLog.logMessage(f"[DrawCircle] PressEvent: {err}", "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning"))
+            QgsMessageLog.logMessage(f"[DrawCircle] PressEvent: {err}", "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning"))
 
     def canvasMoveEvent(self, e):
         if self.status != 1:
@@ -306,7 +306,7 @@ class DrawCircle(QgsMapTool):
             self.rb.show()
             self.move.emit()
         except Exception as err:
-            QgsMessageLog.logMessage(f"[DrawCircle] MoveEvent: {err}", "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning"))
+            QgsMessageLog.logMessage(f"[DrawCircle] MoveEvent: {err}", "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning"))
 
     def canvasReleaseEvent(self, e):
         try:
@@ -324,7 +324,7 @@ class DrawCircle(QgsMapTool):
                     self.rb.show()
                     self.selectionDone.emit()
         except Exception as err:
-            QgsMessageLog.logMessage(f"[DrawCircle] ReleaseEvent: {err}", "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning"))
+            QgsMessageLog.logMessage(f"[DrawCircle] ReleaseEvent: {err}", "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning"))
 
     def reset(self):
         self.status = 0
@@ -359,7 +359,7 @@ class DrawLine(QgsMapTool):
             if e.matches(scoped_enum(QKeySequence, "StandardKey", "Undo")) and self.rb.numberOfVertices() > 1:
                 self.rb.removeLastPoint()
         except Exception as err:
-            QgsMessageLog.logMessage(f"[DrawLine] keyPressEvent: {err}", "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning"))
+            QgsMessageLog.logMessage(f"[DrawLine] keyPressEvent: {err}", "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning"))
 
     def canvasPressEvent(self, e):
         try:
@@ -375,7 +375,7 @@ class DrawLine(QgsMapTool):
                 else:
                     self.reset()
         except Exception as err:
-            QgsMessageLog.logMessage(f"[DrawLine] PressEvent: {err}", "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning"))
+            QgsMessageLog.logMessage(f"[DrawLine] PressEvent: {err}", "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning"))
 
     def canvasMoveEvent(self, e):
         try:
@@ -384,7 +384,7 @@ class DrawLine(QgsMapTool):
                 self.rb.addPoint(self.toMapCoordinates(e.pos()))
             self.move.emit()
         except Exception as err:
-            QgsMessageLog.logMessage(f"[DrawLine] MoveEvent: {err}", "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning"))
+            QgsMessageLog.logMessage(f"[DrawLine] MoveEvent: {err}", "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning"))
 
     def reset(self):
         self.status = 0
@@ -420,7 +420,7 @@ class DrawPoint(QgsMapTool):
             self.rb.addPoint(self.toMapCoordinates(e.pos()))
             self.selectionDone.emit()
         except Exception as err:
-            QgsMessageLog.logMessage(f"[DrawPoint] ReleaseEvent: {err}", "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning"))
+            QgsMessageLog.logMessage(f"[DrawPoint] ReleaseEvent: {err}", "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning"))
 
     def reset(self):
         if self.rb:
@@ -471,7 +471,7 @@ class SelectPoint(QgsMapTool):
             else:
                 self.selectionDone.emit()
         except Exception as err:
-            QgsMessageLog.logMessage(f"[SelectPoint] ReleaseEvent: {err}", "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning"))
+            QgsMessageLog.logMessage(f"[SelectPoint] ReleaseEvent: {err}", "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning"))
 
     def reset(self):
         self.rb.reset(scoped_enum(QgsWkbTypes, "GeometryType", "PolygonGeometry"))
@@ -550,7 +550,7 @@ class DMSDialog(QDialog):
             vbox.addWidget(buttons)
             self.setLayout(vbox)
         except Exception as err:
-            QgsMessageLog.logMessage(f"[DMSDialog] Erreur init: {err}", "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Critical"))
+            QgsMessageLog.logMessage(f"[DMSDialog] Erreur init: {err}", "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Critical"))
 
     def getPoint(self):
         try:
@@ -566,7 +566,7 @@ class DMSDialog(QDialog):
                     longitude *= -1
             return QgsPointXY(longitude, latitude), result == DIALOG_ACCEPTED
         except Exception as err:
-            QgsMessageLog.logMessage(f"[DMSDialog] getPoint: {err}", "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning"))
+            QgsMessageLog.logMessage(f"[DMSDialog] getPoint: {err}", "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning"))
             return QgsPointXY(0, 0), False
 
 
@@ -586,7 +586,7 @@ class XYDialog(QDialog):
             regex = make_regex(motif)
             self.X.setValidator(QRegularExpressionValidator(regex))
             self.Y.setValidator(QRegularExpressionValidator(regex))
-            self.crsButton = QPushButton("Projection")
+            self.crsButton = QPushButton(self.tr("Projection"))
             self.crsButton.clicked.connect(self.changeCRS)
             self.crsLabel = QLabel("")
 
@@ -604,7 +604,7 @@ class XYDialog(QDialog):
             grid.addWidget(buttons, 3, 0, 1, 2)
             self.setLayout(grid)
         except Exception as err:
-            QgsMessageLog.logMessage(f"[XYDialog] Erreur init: {err}", "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning"))
+            QgsMessageLog.logMessage(f"[XYDialog] Erreur init: {err}", "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning"))
 
     def changeCRS(self):
         try:
@@ -613,7 +613,7 @@ class XYDialog(QDialog):
             self.crs = dlg.crs()
             self.crsLabel.setText(self.crs.authid())
         except Exception as err:
-            QgsMessageLog.logMessage(f"[XYDialog] changeCRS: {err}", "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning"))
+            QgsMessageLog.logMessage(f"[XYDialog] changeCRS: {err}", "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning"))
 
     def getPoint(self, crs):
         try:
@@ -628,5 +628,5 @@ class XYDialog(QDialog):
             else:
                 return [QgsPointXY(0, 0), crs], False
         except Exception as err:
-            QgsMessageLog.logMessage(f"[XYDialog] getPoint: {err}", "QdrawEVT", scoped_enum(Qgis, "MessageLevel", "Warning"))
+            QgsMessageLog.logMessage(f"[XYDialog] getPoint: {err}", "Rimba Sketsa", scoped_enum(Qgis, "MessageLevel", "Warning"))
             return [QgsPointXY(0, 0), crs], False

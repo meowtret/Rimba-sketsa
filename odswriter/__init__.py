@@ -43,7 +43,7 @@ class ODSWriter(object):
         self.zipf = ZipFile(odsfile, "w")
 
         # Le XML de départ est un modèle interne constant.
-        self.dom = QDomDocument("qdrawEVT_ods")
+        self.dom = QDomDocument("rimba_sketsa_ods")
         parse_result = self.dom.setContent(ods_components.content_xml)
         # PyQt5 peut retourner un tuple (ok, message, ligne, colonne),
         # tandis que PyQt6 expose selon la version un booléen/objet résultat.
