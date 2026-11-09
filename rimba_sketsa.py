@@ -2225,14 +2225,14 @@ class RimbaSketsa(object):
         # --------------------------------------------------
         # Placement "di atas titik" — enum berbeda antar versi QGIS:
         #   QGIS >= 3.26 / 4.x : Qgis.LabelPlacement.OverPoint
-        #   QGIS <  3.26       : QgsPalLayerSettings.OverPoint
+        #   QGIS <  3.26       : QgsPalLayerSettings.Placement.OverPoint
         # (versi asli memakai QgsPalLayerSettings.LabelPlacement yang tidak
         #  ada, sehingga alat teks crash di QGIS 3.30–3.38)
         # --------------------------------------------------
         try:
             placement = Qgis.LabelPlacement.OverPoint
         except AttributeError:
-            placement = QgsPalLayerSettings.OverPoint
+            placement = scoped_enum(QgsPalLayerSettings, "Placement", "OverPoint")
         try:
             layer_settings.placement = placement
         except Exception:

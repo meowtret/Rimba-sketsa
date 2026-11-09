@@ -5,7 +5,7 @@ qgisMaximumVersion=4.99
 supportsQt6=True
 description=Quick drawing and selection tools: draw text, points (click/XY/DMS), lines, rectangles, circles, polygons and buffers, then select features inside the drawing.
 description[id]=Alat gambar dan seleksi cepat: teks, titik (klik/XY/DMS), garis, persegi, lingkaran, poligon dan buffer, lalu seleksi objek di dalam gambar.
-version=1.0.0
+version=1.0.1
 author=Alfian (meowtret)
 email=alfianbphlxii@gmail.com
 about=Rimba Sketsa adds a compact toolbar to sketch on the map canvas (text, point by click or by XY/DMS coordinates, line, rectangle, circle, polygon, buffer around a feature) and to select the features of visible layers that fall inside the sketch. Results open in a table window that can be saved to ODS or exported as memory layers. Interface in English and Indonesian. Rimba Sketsa is a fork of qdrawEVT 2.74 by François Thévand (itself based on QDraw by Jérémy Kalsron), with the French crisis-management (EVT / Gestion_crise) features removed, a global exception hook removed, simplified icons and several bug fixes.
@@ -19,7 +19,9 @@ tags=drawing, sketch, selection, buffer, vector, coordinates, dms, indonesia
 experimental=True
 deprecated=False
 hasProcessingProvider=no
-changelog=1.0.0 (2026-11-09)
+changelog=1.0.1 (2026-11-09)
+    * Lolos Qt6 Check plugins.qgis.org: enum placement label memakai scoped_enum
+    1.0.0 (2026-11-09)
     * Rilis pertama Rimba Sketsa, turunan qdrawEVT 2.74
     * Fitur EVT (layer POINT/LIGNE/POLYGONE_EVENEMENT) dan installer Gestion_crise dibuang
     * Exception hook global dibuang (versi asli menampilkan error semua plugin sebagai dialog berbahasa Prancis)
