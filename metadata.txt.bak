@@ -1,0 +1,85 @@
+[general]
+name = QdrawEVT
+qgisMinimumVersion = 3.22
+qgisMaximumVersion = 4.99
+supportsQt6 = True
+description = Easily draw and select entities within the drawing footprint
+description[fr] = Dessinez et sélectionnez facilement des entités dans l'empreinte du dessin
+version = 2.73
+author = François Thévand
+email = francois.thevand@gmail.com
+homepage = https://github.com/fthvd/qdrawEVT
+tracker = https://github.com/fthvd/qdrawEVT/issues
+repository = https://github.com/fthvd/qdrawEVT
+category = Vector
+icon = icon.png
+experimental = False
+deprecated = False
+about = QdrawEVT allows you to draw points, lines and polygons directly on the map and perform selections of intersecting layers. A dedicated help is available from the plugin menu.
+about[fr] = QdrawEVT vous permet de dessiner des points, des lignes et des polygones directement sur la carte et d'effectuer des sélections de couches qui se croisent. Une aide dédiée est disponible depuis le menu du plugin.
+tags = selection, vector, tools
+tags[fr] = sélection, vecteur, outils
+changelog = 2.72.2 : Corrections Flake8 et compatibilité Qt6/QGIS4 (enums scoped)
+	2.72.1 : Mise en conformité conjointe Qgis3/Qgis4 - Plugin scan_qt6_compat
+	2.72 Fix Qt5 startup compatibility: remove dependency on IO_READ_ONLY alias
+	2.71 Bandit security scan corrections and safer Qt-based ODS/XML handling
+	2.70 Correction of translation errors and Flake8 code corrections
+	2.68 Developer mode fix
+	2.67 Update to the crisis management configuration and integrated sample project
+	2.66 : correction requiered by Qgis plugins server and correction of the coordinates entry window
+	2.61 : Joint Qgis3/Qgis compliance - Scan_qt6_compat plugin - Removal of the resource.py file
+	2.60 Fixed the selection bug in non-EVT mode and the bug that prevents the selected layers window from closing.
+	2.58 Fixed the bug that caused the Drawings group to be created when opening any project and/or reloading the plugin.
+	2.57 Fixed a bug that disabled the optional crisis management plugin tools when updating qdrawEVT
+	2.56 Fixed a bug that caused a duplicate toolbar to be created after the update.
+	2.55 General improvement of the ergonomics of the tools
+	2.53 Bug fix for the annotation creation tool, translation corrections
+	2.52 Fixed remaining bugs, improved group handling and selection logic
+	2.51 Improved multi-selection, added global export to memory layers
+	2.50 Major refactoring and stability improvements
+name[fr] = QdrawEVT
+description[en] = Easily draw and select entities within the drawing footprint
+name[en] = QdrawEVT
+tags[en] = drawing, selection, events, vector, tools
+about[en] = QdrawEVT allows you to draw points, lines and polygons directly on the map and perform selections of intersecting layers. A dedicated help is available from the plugin menu.
+tags[es] = dibujo, selección, eventos, vector, herramientas
+name[es] = QdrawEVT
+description[es] = Dibuje y seleccione entidades fácilmente dentro del espacio del dibujo
+about[es] = QdrawEVT le permite dibujar puntos, líneas y polígonos directamente en el mapa y realizar selecciones de capas que se cruzan. Una ayuda dedicada está disponible en el menú del complemento.
+tags[pt] = desenho, seleção, eventos, vetor, ferramentas
+name[pt] = QdrawEVT
+description[pt] = Desenhe e selecione facilmente entidades dentro da área de desenho
+about[pt] = QdrawEVT permite desenhar pontos, linhas e polígonos diretamente no mapa e realizar seleções de camadas que se cruzam. Uma ajuda dedicada está disponível no menu do plugin.
+tags[it] = disegno, selezione, eventi, vettore, strumenti
+name[it] = QdrawEVT
+description[it] = Disegna e seleziona facilmente le entità all'interno dell'impronta del disegno
+about[it] = QdrawEVT consente di disegnare punti, linee e poligoni direttamente sulla mappa ed eseguire selezioni di layer che si intersecano. Una guida dedicata è disponibile dal menu del plugin.
+tags[de] = Zeichnung, Auswahl, Ereignisse, Vektor, Werkzeuge
+name[de] = QdrawEVT
+description[de] = Einfaches Zeichnen und Auswählen von Elementen innerhalb des Zeichnungs-Footprints
+about[de] = Mit QdrawEVT können Sie Punkte, Linien und Polygone direkt auf der Karte zeichnen und eine Auswahl sich überschneidender Ebenen durchführen. Eine spezielle Hilfe ist im Plugin-Menü verfügbar.
+tags[nl] = tekenen, selectie, evenementen, vector, gereedschappen
+name[nl] = QdrawEVT
+description[nl] = Teken en selecteer eenvoudig entiteiten binnen de tekeningvoetafdruk
+about[nl] = Met QdrawEVT kunt u punten, lijnen en polygonen rechtstreeks op de kaart tekenen en selecties van elkaar kruisende lagen uitvoeren. Er is speciale hulp beschikbaar via het plug-inmenu.
+tags[sv] = ritning, urval, händelser, vektor, verktyg
+name[sv] = QdrawEVT
+description[sv] = Rita och välj enkelt enheter inom ritningsfotavtrycket
+about[sv] = QdrawEVT låter dig rita punkter, linjer och polygoner direkt på kartan och utföra urval av skärande lager. En dedikerad hjälp är tillgänglig från plugin-menyn.
+tags[pl] = rysunek, wybór, wydarzenia, wektor, narzędzia
+name[pl] = QdrawEVT
+description[pl] = Z łatwością rysuj i wybieraj elementy w obrębie rysunku
+about[pl] = QdrawEVT umożliwia rysowanie punktów, linii i wielokątów bezpośrednio na mapie oraz dokonywanie selekcji przecinających się warstw. Dedykowana pomoc dostępna jest z menu wtyczki.
+about[no] = QdrawEVT lar deg tegne punkter, linjer og polygoner direkte på kartet og utføre valg av kryssende lag. En dedikert hjelp er tilgjengelig fra plugin-menyen.
+tags[no] = tegning, utvalg, hendelser, vektor, verktøy
+name[no] = QdrawEVT
+description[no] = Tegn og velg enkelt enheter innenfor tegnefotavtrykket
+about[da] = QdrawEVT giver dig mulighed for at tegne punkter, linjer og polygoner direkte på kortet og udføre valg af krydsende lag. En dedikeret hjælp er tilgængelig fra plugin-menuen.
+tags[da] = tegning, udvælgelse, begivenheder, vektor, værktøjer
+name[da] = QdrawEVT
+description[da] = Tegn og vælg nemt enheder inden for tegningens fodaftryk
+about[fi] = QdrawEVT:n avulla voit piirtää pisteitä, viivoja ja polygoneja suoraan kartalle ja valita risteäviä tasoja. Erillinen ohje on saatavilla laajennusvalikosta.
+tags[fi] = piirustus, valinta, tapahtumat, vektori, työkalut
+name[fi] = QdrawEVT
+description[fi] = Piirrä ja valitse entiteetit helposti piirustuksen jalanjäljen sisällä
+
